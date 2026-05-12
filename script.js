@@ -12,17 +12,17 @@ const galleryButton = document.querySelector("[data-open-gallery]");
 const revealItems = document.querySelectorAll(".reveal");
 const productCards = document.querySelectorAll("[data-product]");
 const catalogPages = [
-  { src: "Catalogo/COPERTINA (1).png", title: "Copertina catalogo" },
-  { src: "Catalogo/CAROL.png", title: "Carol" },
-  { src: "Catalogo/CAROL PLUS (2).png", title: "Carol Plus" },
-  { src: "Catalogo/MORFEUS 3 STRATI (3).png", title: "Morfeus 3 Strati" },
-  { src: "Catalogo/MORFEUS 2 STRATI (4).png", title: "Morfeus 2 Strati" },
-  { src: "Catalogo/MARTA BOX (5).png", title: "Marta Box" },
-  { src: "Catalogo/KING BOX ORTOPEDICO (6).png", title: "King Box Ortopedico" },
-  { src: "Catalogo/ANDROMEDA H25 (7).png", title: "Andromeda H25" },
-  { src: "Catalogo/ARIANNA H20 (8).png", title: "Arianna H20" },
-  { src: "Catalogo/ACCESSORI E SUPPORTI FINITO(9).png", title: "Accessori e supporti" },
-  { src: "Catalogo/PAGINA FINALE (10).png", title: "Pagina finale" }
+  { src: "/catalogo-copertina.jpg", title: "Copertina catalogo" },
+  { src: "/catalogo-carol.jpg", title: "Carol" },
+  { src: "/catalogo-carol-plus.jpg", title: "Carol Plus" },
+  { src: "/catalogo-morfeus-3-strati.jpg", title: "Morfeus 3 Strati" },
+  { src: "/catalogo-morfeus-2-strati.jpg", title: "Morfeus 2 Strati" },
+  { src: "/catalogo-marta-box.jpg", title: "Marta Box" },
+  { src: "/catalogo-king-box-ortopedico.jpg", title: "King Box Ortopedico" },
+  { src: "/catalogo-andromeda-h25.jpg", title: "Andromeda H25" },
+  { src: "/catalogo-arianna-h20.jpg", title: "Arianna H20" },
+  { src: "/catalogo-accessori-supporti.jpg", title: "Accessori e supporti" },
+  { src: "/catalogo-pagina-finale.jpg", title: "Pagina finale" }
 ];
 let activeLightboxItems = [];
 let activeLightboxIndex = 0;

@@ -1,0 +1,7 @@
+# File originali pesanti: il sito usa le versioni ottimizzate nella root
+Catalogo/
+catalogo-*.png
+
+# Cache e file temporanei
+.DS_Store
+Thumbs.db
