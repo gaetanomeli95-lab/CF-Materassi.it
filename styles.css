@@ -1572,37 +1572,103 @@ a {
     top: 10px;
     width: calc(100% - 18px);
     min-height: 70px;
+    gap: 8px;
+    padding: 7px 10px 7px 12px;
     border-radius: 28px;
   }
 
   .brand-shell {
-    width: 136px;
-    height: 52px;
+    width: 86px;
+    height: 48px;
     border-radius: 22px;
   }
 
+  .header-contacts {
+    display: grid;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 3px;
+    margin-left: 0;
+  }
+
+  .header-contact {
+    width: max-content;
+    max-width: 100%;
+    gap: 3px;
+    padding: 3px 4px 3px 7px;
+  }
+
+  .header-contact span {
+    font-size: 0.58rem;
+  }
+
+  .header-contact a {
+    width: 18px;
+    height: 18px;
+  }
+
+  .header-contact svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .nav-toggle {
+    flex: 0 0 48px;
+    margin-left: auto;
+  }
+
   .hero {
-    padding-top: 118px;
-    gap: 28px;
+    padding: 112px 18px 50px;
+    gap: 24px;
   }
 
   .hero-logo-mark {
-    width: min(260px, 78vw);
-    margin: 0 0 22px -14px;
+    width: min(230px, 66vw);
+    margin: 0 0 18px -8px;
   }
 
   .hero h1 {
-    font-size: clamp(3rem, 16vw, 4.7rem);
+    max-width: 100%;
+    font-size: clamp(2.65rem, 12.8vw, 3.75rem);
+    letter-spacing: -0.068em;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .b2b-note {
+    max-width: 100%;
     width: 100%;
     border-radius: 24px;
     line-height: 1.45;
   }
 
+  .hero-card {
+    box-shadow:
+      0 24px 62px rgba(0, 0, 0, 0.48),
+      0 0 0 6px rgba(255, 255, 255, 0.035);
+  }
+
   .hero-stats {
     grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-stats article {
+    padding: 20px;
   }
 
   .section {
@@ -1616,7 +1682,7 @@ a {
   }
 
   .luxe-ribbon {
-    width: calc(100% - 36px);
+    width: calc(100% - 32px);
     margin-top: -22px;
     border-radius: 26px;
   }
