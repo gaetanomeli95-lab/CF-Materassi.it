@@ -1,133 +1,63 @@
-const header = document.querySelector("[data-header]");
-const nav = document.querySelector("[data-nav]");
-const navToggle = document.querySelector("[data-nav-toggle]");
-const lightbox = document.querySelector("[data-lightbox]");
-const lightboxImage = document.querySelector("[data-lightbox-image]");
-const lightboxTitle = document.querySelector("[data-lightbox-title]");
-const lightboxCounter = document.querySelector("[data-lightbox-counter]");
-const lightboxClose = document.querySelector("[data-lightbox-close]");
-const lightboxPrev = document.querySelector("[data-lightbox-prev]");
-const lightboxNext = document.querySelector("[data-lightbox-next]");
-const galleryButton = document.querySelector("[data-open-gallery]");
-const revealItems = document.querySelectorAll(".reveal");
-const productCards = document.querySelectorAll("[data-product]");
-const catalogPages = [
-  { src: "/catalogo-copertina.jpg", title: "Copertina catalogo" },
-  { src: "/catalogo-carol.jpg", title: "Carol" },
-  { src: "/catalogo-carol-plus.jpg", title: "Carol Plus" },
-  { src: "/catalogo-morfeus-3-strati.jpg", title: "Morfeus 3 Strati" },
-  { src: "/catalogo-morfeus-2-strati.jpg", title: "Morfeus 2 Strati" },
-  { src: "/catalogo-marta-box.jpg", title: "Marta Box" },
-  { src: "/catalogo-king-box-ortopedico.jpg", title: "King Box Ortopedico" },
-  { src: "/catalogo-andromeda-h25.jpg", title: "Andromeda H25" },
-  { src: "/catalogo-arianna-h20.jpg", title: "Arianna H20" },
-  { src: "/catalogo-accessori-supporti.jpg", title: "Accessori e supporti" },
-  { src: "/catalogo-pagina-finale.jpg", title: "Pagina finale" }
-];
-let activeLightboxItems = [];
-let activeLightboxIndex = 0;
+const header = document.querySelector('[data-header]');
+const toggle = document.querySelector('[data-nav-toggle]');
+const menu = document.querySelector('[data-mobile-menu]');
+const progress = document.querySelector('[data-progress]');
+const inside = document.querySelector('[data-inside-section]');
+const insideMeter = document.querySelector('[data-inside-meter]');
+const steps = [...document.querySelectorAll('[data-step]')];
 
-const setHeaderState = () => {
-  header.classList.toggle("is-scrolled", window.scrollY > 24);
-};
+const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 
-const closeNavigation = () => {
-  nav.classList.remove("is-open");
-  navToggle.classList.remove("is-open");
-  navToggle.setAttribute("aria-expanded", "false");
-};
+function setMenu(open){
+  toggle?.classList.toggle('open', open);
+  menu?.classList.toggle('open', open);
+  header?.classList.toggle('menu-active', open);
+  document.body.classList.toggle('menu-open', open);
+  toggle?.setAttribute('aria-expanded', String(open));
+}
 
-const renderLightbox = () => {
-  const item = activeLightboxItems[activeLightboxIndex];
-  const hasMultipleItems = activeLightboxItems.length > 1;
-  lightboxImage.src = item.src;
-  lightboxImage.alt = item.title;
-  lightboxTitle.textContent = item.title;
-  lightboxCounter.textContent = hasMultipleItems ? `Pagina ${activeLightboxIndex + 1} di ${activeLightboxItems.length}` : "";
-  lightboxPrev.classList.toggle("is-hidden", !hasMultipleItems);
-  lightboxNext.classList.toggle("is-hidden", !hasMultipleItems);
-};
+toggle?.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
+menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+document.addEventListener('keydown', e => { if(e.key === 'Escape') setMenu(false); });
 
-const openLightbox = (items, startIndex = 0) => {
-  activeLightboxItems = items;
-  activeLightboxIndex = startIndex;
-  renderLightbox();
-  lightbox.classList.add("is-open");
-  lightbox.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-};
-
-const closeLightbox = () => {
-  lightbox.classList.remove("is-open");
-  lightbox.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-};
-
-const changeLightboxPage = (direction) => {
-  if (activeLightboxItems.length <= 1) {
-    return;
-  }
-  activeLightboxIndex = (activeLightboxIndex + direction + activeLightboxItems.length) % activeLightboxItems.length;
-  renderLightbox();
-};
-
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("is-visible");
+const reveals = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
       revealObserver.unobserve(entry.target);
     }
   });
-}, {
-  threshold: 0.16
-});
+},{threshold:.12});
+reveals.forEach(el => revealObserver.observe(el));
 
-revealItems.forEach((item) => revealObserver.observe(item));
+function updateScrollUI(){
+  const y = window.scrollY;
+  const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  const pageProgress = y / max;
+  if(progress) progress.style.width = `${pageProgress * 100}%`;
+  header?.classList.toggle('scrolled', y > 30);
 
-window.addEventListener("scroll", setHeaderState, { passive: true });
-setHeaderState();
-
-navToggle.addEventListener("click", () => {
-  const isOpen = nav.classList.toggle("is-open");
-  navToggle.classList.toggle("is-open", isOpen);
-  navToggle.setAttribute("aria-expanded", String(isOpen));
-});
-
-nav.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", closeNavigation);
-});
-
-productCards.forEach((card) => {
-  card.addEventListener("click", () => {
-    openLightbox([{ src: card.dataset.image, title: card.dataset.product }]);
-  });
-});
-
-galleryButton.addEventListener("click", () => {
-  openLightbox(catalogPages);
-});
-
-lightboxClose.addEventListener("click", closeLightbox);
-lightboxPrev.addEventListener("click", () => changeLightboxPage(-1));
-lightboxNext.addEventListener("click", () => changeLightboxPage(1));
-
-lightbox.addEventListener("click", (event) => {
-  if (event.target === lightbox) {
-    closeLightbox();
+  if(inside){
+    const rect = inside.getBoundingClientRect();
+    const travel = Math.max(1, inside.offsetHeight - window.innerHeight);
+    const p = clamp((-rect.top) / travel, 0, 1);
+    document.documentElement.style.setProperty('--inside-progress', p.toFixed(4));
+    if(insideMeter) insideMeter.style.height = `${p * 100}%`;
+    const active = Math.min(3, Math.floor(p * 4));
+    steps.forEach((step, i) => step.classList.toggle('is-active', i === active));
+    window.dispatchEvent(new CustomEvent('cf:inside-progress',{detail:{progress:p,active}}));
   }
-});
+}
 
-document.addEventListener("keydown", (event) => {
-  if (!lightbox.classList.contains("is-open")) {
-    return;
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if(!ticking){
+    requestAnimationFrame(() => { updateScrollUI(); ticking = false; });
+    ticking = true;
   }
-  if (event.key === "Escape") {
-    closeLightbox();
-  }
-  if (event.key === "ArrowLeft") {
-    changeLightboxPage(-1);
-  }
-  if (event.key === "ArrowRight") {
-    changeLightboxPage(1);
-  }
-});
+},{passive:true});
+window.addEventListener('resize', updateScrollUI,{passive:true});
+updateScrollUI();
+
+document.querySelector('[data-year]')?.replaceChildren(String(new Date().getFullYear()));
