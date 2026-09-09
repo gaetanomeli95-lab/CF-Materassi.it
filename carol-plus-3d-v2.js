@@ -67,19 +67,23 @@ function helix(){
 }
 function springCore(){
   const group=new THREE.Group(),cols=40,rows=40,total=1600;
-  const pocketGeo=new THREE.CylinderGeometry(.05,.05,.72,7,1,true),springGeo=helix();
-  const pocketMat=new THREE.MeshPhysicalMaterial({color:0xf1eee7,roughness:.92,transparent:true,opacity:.58,side:THREE.DoubleSide,vertexColors:true});
-  const springMat=new THREE.MeshPhysicalMaterial({color:0xa78b62,metalness:.68,roughness:.36,vertexColors:true});
+  const pocketGeo=new THREE.CylinderGeometry(.062,.062,.78,9,1,true),springGeo=helix();
+  const pocketMat=new THREE.MeshPhysicalMaterial({color:0xf1eee7,roughness:.92,transparent:true,opacity:.32,side:THREE.DoubleSide,vertexColors:true});
+  const springMat=new THREE.MeshPhysicalMaterial({color:0xb8955f,metalness:.9,roughness:.24,vertexColors:true});
   const pockets=new THREE.InstancedMesh(pocketGeo,pocketMat,total),springs=new THREE.InstancedMesh(springGeo,springMat,total),dummy=new THREE.Object3D();
   const xSpan=5.0,zSpan=2.58;let i=0;const palette=[0x82715e,0x9a8465,0xb49a70,0xd0b47b,0xb49a70,0x9a8465,0x82715e];
   for(let z=0;z<rows;z++)for(let x=0;x<cols;x++){
     const px=-xSpan/2+x*xSpan/(cols-1),pz=-zSpan/2+z*zSpan/(rows-1),zone=Math.min(6,Math.floor(x/cols*7));
-    dummy.position.set(px,0,pz);dummy.scale.set(1,[.95,.98,1.01,1.05,1.01,.98,.95][zone],1);dummy.updateMatrix();
+    dummy.position.set(px,0,pz);dummy.scale.set(1,[.94,.97,1.00,1.08,1.00,.97,.94][zone],1);dummy.updateMatrix();
     pockets.setMatrixAt(i,dummy.matrix);springs.setMatrixAt(i,dummy.matrix);const c=new THREE.Color(palette[zone]);pockets.setColorAt(i,c.clone().lerp(new THREE.Color(0xffffff),.7));springs.setColorAt(i,c);i++;
   }
   pockets.instanceMatrix.needsUpdate=springs.instanceMatrix.needsUpdate=true;if(pockets.instanceColor)pockets.instanceColor.needsUpdate=true;if(springs.instanceColor)springs.instanceColor.needsUpdate=true;
   group.add(pockets,springs);
-  const boxMat=new THREE.MeshPhysicalMaterial({color:0xf3efe6,roughness:.84});const box=frame(5.72,3.30,.76,.34,boxMat);group.add(box);
+  const boxMat=new THREE.MeshPhysicalMaterial({color:0xf3efe6,roughness:.84});
+  const back=new THREE.Mesh(new THREE.BoxGeometry(5.72,.76,.34),boxMat);back.position.z=-1.48;group.add(back);
+  const left=new THREE.Mesh(new THREE.BoxGeometry(.34,.76,2.62),boxMat);left.position.x=-2.69;group.add(left);
+  const right=new THREE.Mesh(new THREE.BoxGeometry(.34,.76,2.62),boxMat);right.position.x=2.69;group.add(right);
+  const frontLow=new THREE.Mesh(new THREE.BoxGeometry(5.72,.22,.34),boxMat);frontLow.position.set(0,-.27,1.48);group.add(frontLow);
   return group;
 }
 
@@ -109,16 +113,13 @@ const mat={
 const pieces=[];
 function slab(name,y,h,material,w=W,d=D){const o=new THREE.Mesh(roundedSlabGeometry(w,d,h,.22,Math.min(.03,h*.20)),material);o.position.y=y;system.add(o);pieces.push({name,obj:o,base:y});return o;}
 
-// Base / lower package
 const bottomCover=slab('bottomCover',-1.00,.07,mat.cover,5.92,3.47);
 const liningBottom=slab('liningBottom',-.94,.025,mat.lining,5.86,3.41);
 const polyBottom=slab('polyBottom',-.82,.19,mat.poly,5.80,3.35);
 const feltBottom=slab('feltBottom',-.69,.045,mat.felt,5.82,3.37);
 
-// Central core: 1600 pocket microcoils + 9x14 anti-sag perimeter box
 const core=springCore();core.position.y=-.27;system.add(core);pieces.push({name:'core',obj:core,base:-.27});
 
-// Upper comfort package
 const feltTop=slab('feltTop',.14,.045,mat.felt,5.84,3.39);
 const polyTop=slab('polyTop',.28,.19,mat.poly,5.80,3.35);
 const memory=slab('memory',.56,.32,mat.memory,5.82,3.37);
@@ -127,14 +128,13 @@ const fiber=slab('fiber',.85,.11,mat.fiber,5.90,3.45);
 const topCover=new THREE.Group();
 const coverBase=new THREE.Mesh(roundedSlabGeometry(5.96,3.50,.18,.25,.04),mat.cover);topCover.add(coverBase);topPattern(topCover,5.80,3.34,.105);topCover.position.y=1.01;system.add(topCover);pieces.push({name:'topCover',obj:topCover,base:1.01});
 
-// Real exterior shell: lower velvet base remains with the spring architecture; upper breathable side travels with the comfort package.
 const lowerShell=new THREE.Group();const lowerVelvet=frame(W,D,.73,.09,mat.brown);lowerVelvet.position.y=-.54;lowerShell.add(lowerVelvet);const bottomPipe=frame(W,D,.04,.055,mat.pipe);bottomPipe.position.y=-.91;lowerShell.add(bottomPipe);ribbon(lowerShell,W,D,-.17);handles(lowerShell,W,D,-.50);system.add(lowerShell);pieces.push({name:'lowerShell',obj:lowerShell,base:0});
 const upperShell=new THREE.Group();const breathable=frame(W,D,.57,.09,mat.beige);breathable.position.y=.70;upperShell.add(breathable);const topPipe=frame(W,D,.04,.055,mat.pipe);topPipe.position.y=1.10;upperShell.add(topPipe);system.add(upperShell);pieces.push({name:'upperShell',obj:upperShell,base:0});
 
 const floor=new THREE.Mesh(new THREE.PlaneGeometry(26,26),new THREE.MeshPhysicalMaterial({color:0x080808,roughness:.92,transparent:true,opacity:.7}));floor.rotation.x=-Math.PI/2;floor.position.y=-4.5;scene.add(floor);
 const ring=new THREE.Mesh(new THREE.TorusGeometry(4.85,.018,8,160),new THREE.MeshBasicMaterial({color:0xc8a36a,transparent:true,opacity:.16}));ring.rotation.x=Math.PI/2;ring.position.set(system.position.x,-1.8,0);scene.add(ring);
 
-const offsets={topCover:3.10,upperShell:2.72,fiber:2.45,liningTop:2.10,memory:1.68,polyTop:1.22,feltTop:.85,core:.18,feltBottom:-.48,polyBottom:-.76,liningBottom:-1.02,bottomCover:-1.28,lowerShell:-1.02};
+const offsets={topCover:3.10,upperShell:2.72,fiber:2.45,liningTop:2.10,memory:1.86,polyTop:1.38,feltTop:1.02,core:.08,feltBottom:-.48,polyBottom:-.76,liningBottom:-1.02,bottomCover:-1.28,lowerShell:-1.02};
 const timings={topCover:[.06,.24],upperShell:[.08,.27],fiber:[.11,.31],liningTop:[.14,.34],memory:[.18,.43],polyTop:[.24,.49],feltTop:[.30,.55],core:[.38,.62],feltBottom:[.50,.71],polyBottom:[.56,.77],liningBottom:[.62,.82],bottomCover:[.68,.87],lowerShell:[.72,.92]};
 let progress=0;window.addEventListener('cf:inside-progress',e=>progress=e.detail.progress);
 const callouts=[...document.querySelectorAll('.carol-callout')];
@@ -146,7 +146,12 @@ function frameLoop(){
   for(const p of pieces){const [a,b]=timings[p.name]||[0,1],e=phase(progress,a,b),off=offsets[p.name]||0;p.obj.position.y=(p.name==='lowerShell'||p.name==='upperShell'?0:p.base)+off*e;}
   const whole=ease((progress-.02)/.94);core.rotation.y=phase(progress,.36,.64)*.09;core.scale.y=.98+phase(progress,.36,.64)*.05;
   if(!reducedMotion){system.rotation.y=-.40+whole*.52+Math.sin(t*.30)*.015;system.rotation.x=-.11+Math.sin(t*.34)*.01;ring.rotation.z=t*.032;}
-  const orbit=whole*Math.PI*.20,r=mobile?10.8:12.6;camera.position.x=(mobile?5.2:8.7)*Math.cos(orbit);camera.position.z=r-1.25*whole;camera.position.y=(mobile?4.6:5.8)-whole*.55;camera.lookAt(system.position.x,.10,0);
+  const orbit=whole*Math.PI*.20,r=mobile?10.8:12.6;
+  const coreFocus=phase(progress,.34,.66);
+  camera.position.x=(mobile?5.2:8.7)*Math.cos(orbit);
+  camera.position.z=r-1.25*whole-1.1*coreFocus;
+  camera.position.y=(mobile?4.6:5.8)-whole*.55-1.25*coreFocus;
+  camera.lookAt(system.position.x,.02-.28*coreFocus,0);
   updateCallouts(progress);renderer.render(scene,camera);requestAnimationFrame(frameLoop);
 }
 frameLoop();
