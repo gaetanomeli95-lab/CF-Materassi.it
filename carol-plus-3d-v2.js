@@ -11,13 +11,18 @@ const ease=v=>{v=clamp(v);return v*v*(3-2*v)};
 const phase=(p,a,b)=>ease((p-a)/(b-a));
 
 const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:!mobile,powerPreference:'high-performance'});
-renderer.setPixelRatio(DPR);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.10;
-const scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x060606,.024);
+renderer.setPixelRatio(DPR);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;
+const scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x060606,.021);
 const camera=new THREE.PerspectiveCamera(mobile?45:31,1,.1,80);camera.position.set(mobile?5.1:8.4,mobile?4.6:5.6,mobile?10.6:12.4);
-scene.add(new THREE.HemisphereLight(0xf5eee3,0x030303,1.55));
-const key=new THREE.DirectionalLight(0xfff1dc,6.2);key.position.set(-5,9,7);scene.add(key);
-const rim=new THREE.DirectionalLight(0xc49762,3.8);rim.position.set(5,4,-5);scene.add(rim);
-const coreLight=new THREE.PointLight(0xfff3df,22,11,2);coreLight.position.set(.6,-.15,4.5);scene.add(coreLight);
+
+scene.add(new THREE.HemisphereLight(0xf7f4ee,0x101010,1.85));
+const key=new THREE.DirectionalLight(0xfff4e8,6.6);key.position.set(-5,9,7);scene.add(key);
+const rim=new THREE.DirectionalLight(0xd7b88c,3.4);rim.position.set(5,4,-5);scene.add(rim);
+
+// Dedicated interior lights: the microcoils must read as light pocketed springs, never as a black mass.
+const coreLight=new THREE.PointLight(0xffffff,34,13,1.7);coreLight.position.set(.4,.05,4.2);scene.add(coreLight);
+const coreFillL=new THREE.PointLight(0xf8f4ec,18,9,1.9);coreFillL.position.set(-4,.1,2.2);scene.add(coreFillL);
+const coreFillR=new THREE.PointLight(0xf0f2f4,16,9,1.9);coreFillR.position.set(4,.05,1.2);scene.add(coreFillR);
 
 const model=buildCarolPlusModel({mobile});
 const {system,pieces,core,offsets,timings}=model;
@@ -47,13 +52,16 @@ function frameLoop(){
   }
   const whole=ease((progress-.02)/.94),coreFocus=phase(progress,.34,.66);
   core.rotation.y=coreFocus*.06;core.scale.y=.98+coreFocus*.075;
-  core.userData.pocketsRear.material.opacity=.50-.14*coreFocus;
-  core.userData.pocketsFront.material.opacity=.24+.12*coreFocus;
-  core.userData.pocketsFront.position.z=.12*coreFocus;
-  core.userData.springsFront.position.z=.18*coreFocus;
-  core.userData.springsFront.material.emissiveIntensity=.22+.62*coreFocus;
-  core.userData.frontL.position.x=-2.30-.16*coreFocus;
-  core.userData.frontR.position.x=2.30+.16*coreFocus;
+
+  // Reveal the front pockets, but keep enough fabric opacity to read that every spring is individually pocketed.
+  core.userData.pocketsRear.material.opacity=.70-.10*coreFocus;
+  core.userData.pocketsFront.material.opacity=.78-.08*coreFocus;
+  core.userData.pocketsFront.position.z=.14*coreFocus;
+  core.userData.springsFront.position.z=.20*coreFocus;
+  core.userData.springsFront.material.emissiveIntensity=.58+.42*coreFocus;
+  core.userData.springsRear.material.emissiveIntensity=.26+.22*coreFocus;
+  core.userData.frontL.position.x=-2.30-.18*coreFocus;
+  core.userData.frontR.position.x=2.30+.18*coreFocus;
 
   if(!reducedMotion){
     system.rotation.y=-.42+whole*.49+Math.sin(t*.28)*.012;
@@ -63,10 +71,13 @@ function frameLoop(){
 
   const orbit=whole*Math.PI*.18,r=mobile?10.6:12.4;
   camera.position.x=(mobile?5.1:8.4)*Math.cos(orbit);
-  camera.position.z=r-1.15*whole-1.85*coreFocus;
-  camera.position.y=(mobile?4.6:5.6)-whole*.48-1.45*coreFocus;
+  camera.position.z=r-1.15*whole-1.95*coreFocus;
+  camera.position.y=(mobile?4.6:5.6)-whole*.48-1.52*coreFocus;
   camera.lookAt(system.position.x,-.03-.30*coreFocus,0);
-  coreLight.intensity=22+34*coreFocus;
+
+  coreLight.intensity=34+38*coreFocus;
+  coreFillL.intensity=18+18*coreFocus;
+  coreFillR.intensity=16+16*coreFocus;
 
   updateCallouts(progress);renderer.render(scene,camera);requestAnimationFrame(frameLoop);
 }
