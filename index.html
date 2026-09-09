@@ -13,7 +13,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=cf-v2-carol-digital-twin-1">
+  <link rel="stylesheet" href="styles.css?v=cf-v2-carol-exploded-2">
+  <link rel="stylesheet" href="carol-plus.css?v=cf-v2-carol-exploded-2">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -78,37 +79,56 @@
       <p class="eyebrow dark reveal">NON UN RENDER GENERICO. IL PRODOTTO REALE.</p>
       <div class="manifesto-grid">
         <h2 class="reveal">Fuori è Carol Plus.<br><span>Dentro, quello che c'è davvero.</span></h2>
-        <p class="reveal">La nuova esperienza CF parte dal prodotto reale. Foto e design esterno diventano il riferimento; la struttura tecnica viene ricostruita in 3D usando solo caratteristiche documentate.</p>
+        <p class="reveal">La struttura tecnica viene ricostruita in 3D partendo dalla scheda reale: comfort package, box perimetrale e 1600 micromolle diventano un unico digital twin interattivo.</p>
       </div>
     </section>
 
-    <section class="inside" id="inside" data-inside-section>
+    <section class="inside carol-technical" id="inside" data-inside-section style="--x:26px">
       <div class="inside-sticky">
-        <canvas id="inside-webgl" class="inside-webgl" aria-label="Esploso 3D interattivo del materasso Carol Plus"></canvas>
+        <canvas id="carol-webgl" class="inside-webgl" aria-label="Esploso 3D interattivo verificato del Carol Plus"></canvas>
         <div class="inside-overlay" aria-hidden="true"></div>
+
+        <div class="carol-tech-badge" aria-hidden="true"><i></i><b>H27</b><span>VERIFIED BUILD</span></div>
+        <div class="carol-zone-legend" aria-hidden="true"><span>7 ZONE</span><div class="carol-zone-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+
         <div class="inside-copy">
-          <div class="inside-index">CAROL PLUS · H27 · DIGITAL TWIN 01</div>
+          <div class="inside-index">CAROL PLUS · H27 · VERIFIED DIGITAL TWIN</div>
           <div class="inside-step is-active" data-step="0">
-            <span>01 · PRODOTTO REALE</span>
-            <h3>Carol Plus.</h3>
-            <p>Partiamo dal modello vero: H27, sfoderabile, con memory e nucleo a 1600 micromolle insacchettate. Continua a scorrere per aprirlo.</p>
+            <span>01 · ASSEMBLATO</span>
+            <h3>Un solo Carol Plus.</h3>
+            <p>Il 3D parte dal materasso completo: fascia in velluto, fascia 3D, maniglie, piping e cover trapuntata sono parte dello stesso modello.</p>
           </div>
           <div class="inside-step" data-step="1">
-            <span>02 · MEMORY</span>
-            <h3>Lo strato comfort.</h3>
-            <p>Il rivestimento si separa e lascia emergere il memory. Nessuno spessore viene dichiarato finché non è documentato nella scheda tecnica.</p>
+            <span>02 · COMFORT PACKAGE</span>
+            <h3>Memory 5 cm.</h3>
+            <p>Il pacchetto superiore si apre nell'ordine reale: cover, imbottitura, maglina, feltro, memory foam 5 cm e poliuretano 3 cm.</p>
           </div>
           <div class="inside-step" data-step="2">
-            <span>03 · 1600 MICROMOLLE</span>
-            <h3>Il cuore del Carol Plus.</h3>
-            <p>Il core viene rappresentato con 1600 unità insacchettate istanziate realmente nella scena WebGL: non poche molle decorative, ma la densità del sistema.</p>
+            <span>03 · CORE</span>
+            <h3>1600 micromolle.</h3>
+            <p>Il cuore del Carol Plus è una matrice 40×40 di micromolle insacchettate, visualizzata in 7 zone differenziate e racchiusa nel box antiaffossamento.</p>
           </div>
           <div class="inside-step" data-step="3">
-            <span>04 · SYSTEM</span>
-            <h3>H27. Sfoderabile.</h3>
-            <p>Rivestimento, memory e nucleo a micromolle tornano insieme. Un solo prodotto, mostrato dall'esterno fino alla sua architettura interna.</p>
+            <span>04 · ARCHITETTURA</span>
+            <h3>Box 9×14.</h3>
+            <p>Il box perimetrale, gli strati inferiori e la fascia esterna restano coerenti con la costruzione reale. Poi tutto torna a comporre il materasso.</p>
           </div>
         </div>
+
+        <div class="carol-tech-callouts" aria-hidden="true">
+          <div class="carol-callout is-active"><div><strong>Tessuto stretch</strong><span>Fibra poliestere anallergica · 500 g/m² per lato</span></div></div>
+          <div class="carol-callout"><div><strong>Maglina interna</strong><span>Foderatura interna del rivestimento</span></div></div>
+          <div class="carol-callout"><div><strong>Feltro</strong><span>1,300 kg per lato</span></div></div>
+          <div class="carol-callout"><div><strong>Memory Foam</strong><span>5 cm · densità 40</span></div></div>
+          <div class="carol-callout"><div><strong>Poliuretano</strong><span>3 cm per lato · densità 25</span></div></div>
+          <div class="carol-callout"><div><strong>1600 micromolle</strong><span>Insacchettate · 7 zone differenziate</span></div></div>
+          <div class="carol-callout"><div><strong>Box perimetrale</strong><span>Tamponi 9×14 · densità MK5</span></div></div>
+          <div class="carol-callout"><div><strong>Fascia 3D</strong><span>Traspirante</span></div></div>
+          <div class="carol-callout"><div><strong>Fascia velluto</strong><span>4 maniglie</span></div></div>
+          <div class="carol-callout"><div><strong>ZIP</strong><span>Carol Plus sfoderabile</span></div></div>
+        </div>
+
+        <div class="carol-tech-caption" aria-hidden="true"><b>CAROL PLUS</b> · MEMORY 5 CM · 1600 MICROMOLLE · BOX 9×14</div>
         <div class="inside-meter" aria-hidden="true"><span data-inside-meter></span></div>
       </div>
     </section>
@@ -212,7 +232,8 @@
     <span>© <span data-year></span> CF Materassi</span>
   </footer>
 
-  <script src="script.js?v=cf-v2-carol-digital-twin-1" defer></script>
-  <script type="module" src="experience.js?v=cf-v2-carol-digital-twin-1"></script>
+  <script src="script.js?v=cf-v2-carol-exploded-2" defer></script>
+  <script type="module" src="experience.js?v=cf-v2-carol-exploded-2"></script>
+  <script type="module" src="carol-plus-3d-v2.js?v=cf-v2-carol-exploded-2"></script>
 </body>
 </html>
