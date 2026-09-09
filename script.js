@@ -1,198 +1,218 @@
-const body = document.body;
 const header = document.querySelector('[data-header]');
+const progress = document.querySelector('[data-progress]');
 const navToggle = document.querySelector('[data-nav-toggle]');
 const mobileMenu = document.querySelector('[data-mobile-menu]');
-const progress = document.querySelector('[data-progress]');
+const productVisual = document.querySelector('.product-visual');
+const productImage = document.querySelector('[data-product-image]');
+const productCounter = document.querySelector('[data-product-counter]');
+const productKicker = document.querySelector('[data-product-kicker]');
+const productName = document.querySelector('[data-product-name]');
+const productDesc = document.querySelector('[data-product-desc]');
+const productSpec = document.querySelector('[data-product-spec]');
+const productButtons = [...document.querySelectorAll('[data-product]')];
+const parallaxProduct = document.querySelector('[data-parallax-product]');
+const heroStage = document.querySelector('[data-hero-stage]');
 const year = document.querySelector('[data-year]');
-
-if (year) year.textContent = new Date().getFullYear();
-
-const closeMenu = () => {
-  if (!navToggle || !mobileMenu) return;
-  navToggle.setAttribute('aria-expanded', 'false');
-  mobileMenu.classList.remove('open');
-};
-
-if (navToggle && mobileMenu) {
-  navToggle.addEventListener('click', () => {
-    const open = navToggle.getAttribute('aria-expanded') === 'true';
-    navToggle.setAttribute('aria-expanded', String(!open));
-    mobileMenu.classList.toggle('open', !open);
-  });
-
-  mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-}
-
-const onScroll = () => {
-  const y = window.scrollY;
-  if (header) header.classList.toggle('scrolled', y > 24);
-
-  if (progress) {
-    const doc = document.documentElement;
-    const max = doc.scrollHeight - window.innerHeight;
-    const pct = max > 0 ? Math.min(100, (y / max) * 100) : 0;
-    progress.style.width = `${pct}%`;
-  }
-};
-
-window.addEventListener('scroll', onScroll, { passive: true });
-onScroll();
-
-const revealObserver = new IntersectionObserver(
-  entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.12, rootMargin: '0px 0px -5% 0px' }
-);
-
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 const products = [
   {
     name: 'Carol Plus',
     kicker: 'TOP COMFORT',
-    description: 'La proposta CF con 1600 micromolle, pensata per un’offerta di comfort evoluta.',
+    image: '/catalogo-carol-plus.jpg',
+    alt: 'Materasso Carol Plus CF Materassi',
+    description: "La proposta CF con 1600 micromolle, pensata per un'offerta di comfort evoluta.",
     specValue: '1600',
-    specLabel: 'MICROMOLLE',
-    image: '/catalogo-carol-plus.jpg'
+    specLabel: 'MICROMOLLE'
   },
   {
     name: 'Carol',
     kicker: 'COMFORT A MOLLE',
-    description: 'Un modello CF con 800 molle, dedicato a chi cerca una soluzione strutturata e facilmente inseribile nell’offerta professionale.',
+    image: '/catalogo-carol.jpg',
+    alt: 'Materasso Carol CF Materassi',
+    description: 'Una soluzione a 800 molle per costruire una proposta professionale equilibrata e facilmente presentabile.',
     specValue: '800',
-    specLabel: 'MOLLE',
-    image: '/catalogo-carol.jpg'
+    specLabel: 'MOLLE'
   },
   {
     name: 'Morfeus 3 Strati',
     kicker: 'STRUTTURA EVOLUTA',
-    description: 'Tre strati per una proposta costruita attorno alla stratificazione del comfort.',
+    image: '/catalogo-morfeus-3-strati.jpg',
+    alt: 'Materasso Morfeus 3 Strati CF Materassi',
+    description: 'Tre strati per una proposta costruita intorno a sostegno, comfort e differenziazione della gamma.',
     specValue: '3',
-    specLabel: 'STRATI',
-    image: '/catalogo-morfeus-3-strati.jpg'
+    specLabel: 'STRATI'
   },
   {
     name: 'Morfeus 2 Strati',
     kicker: 'EQUILIBRIO',
-    description: 'La versione a due strati della linea Morfeus, presentata nel catalogo professionale CF 2026.',
+    image: '/catalogo-morfeus-2-strati.jpg',
+    alt: 'Materasso Morfeus 2 Strati CF Materassi',
+    description: 'Una configurazione a due strati pensata per completare la linea Morfeus con una proposta essenziale e versatile.',
     specValue: '2',
-    specLabel: 'STRATI',
-    image: '/catalogo-morfeus-2-strati.jpg'
+    specLabel: 'STRATI'
   },
   {
     name: 'King Box',
     kicker: 'ORTOPEDICO A MOLLE',
-    description: 'Una soluzione della collezione CF dedicata al segmento ortopedico a molle.',
-    specValue: 'KING',
-    specLabel: 'BOX',
-    image: '/catalogo-king-box-ortopedico.jpg'
+    image: '/catalogo-king-box-ortopedico.jpg',
+    alt: 'Materasso King Box ortopedico CF Materassi',
+    description: 'Il modello ortopedico a molle della collezione CF per il mercato professionale.',
+    specValue: 'BOX',
+    specLabel: 'ORTOPEDICO'
   },
   {
     name: 'Marta Box',
     kicker: 'COLLEZIONE CF',
-    description: 'Marta Box completa la gamma professionale con una proposta dedicata al mercato B2B.',
+    image: '/catalogo-marta-box.jpg',
+    alt: 'Materasso Marta Box CF Materassi',
+    description: 'Una proposta della collezione CF pensata per ampliare la scelta disponibile a rivenditori e operatori.',
     specValue: 'CF',
-    specLabel: 'B2B',
-    image: '/catalogo-marta-box.jpg'
+    specLabel: 'COLLEZIONE'
   },
   {
     name: 'Andromeda H25',
-    kicker: 'COLLEZIONE CF',
-    description: 'Andromeda H25, una delle proposte presenti nel catalogo professionale CF Materassi 2026.',
+    kicker: 'ALTEZZA H25',
+    image: '/catalogo-andromeda-h25.jpg',
+    alt: 'Materasso Andromeda H25 CF Materassi',
+    description: 'Andromeda H25 completa la gamma professionale CF con una configurazione dedicata al comfort quotidiano.',
     specValue: 'H25',
-    specLabel: 'ANDROMEDA',
-    image: '/catalogo-andromeda-h25.jpg'
+    specLabel: 'ALTEZZA'
   },
   {
     name: 'Arianna H20',
-    kicker: 'COLLEZIONE CF',
-    description: 'Arianna H20, parte della gamma CF dedicata a rivenditori e operatori professionali.',
+    kicker: 'ALTEZZA H20',
+    image: '/catalogo-arianna-h20.jpg',
+    alt: 'Materasso Arianna H20 CF Materassi',
+    description: 'Arianna H20 amplia la collezione con una soluzione compatta pensata per esigenze professionali diverse.',
     specValue: 'H20',
-    specLabel: 'ARIANNA',
-    image: '/catalogo-arianna-h20.jpg'
+    specLabel: 'ALTEZZA'
   }
 ];
 
-const visual = document.querySelector('.product-visual');
-const productImage = document.querySelector('[data-product-image]');
-const productName = document.querySelector('[data-product-name]');
-const productKicker = document.querySelector('[data-product-kicker]');
-const productDesc = document.querySelector('[data-product-desc]');
-const productSpec = document.querySelector('[data-product-spec]');
-const productCounter = document.querySelector('[data-product-counter]');
-const productButtons = [...document.querySelectorAll('[data-product]')];
-
-let activeProduct = 0;
-let swapTimer;
-
-const renderProduct = index => {
-  if (!products[index] || index === activeProduct && productImage?.src.includes(products[index].image)) return;
-  activeProduct = index;
-  const item = products[index];
-
-  if (visual) visual.classList.add('is-switching');
-  clearTimeout(swapTimer);
-
-  swapTimer = setTimeout(() => {
-    if (productImage) {
-      productImage.src = item.image;
-      productImage.alt = item.name;
-    }
-    if (productName) productName.textContent = item.name;
-    if (productKicker) productKicker.textContent = item.kicker;
-    if (productDesc) productDesc.textContent = item.description;
-    if (productSpec) productSpec.innerHTML = `<strong>${item.specValue}</strong><span>${item.specLabel}</span>`;
-    if (productCounter) productCounter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(products.length).padStart(2, '0')}`;
-
-    productButtons.forEach((button, buttonIndex) => {
-      button.classList.toggle('active', buttonIndex === index);
-      button.setAttribute('aria-selected', String(buttonIndex === index));
-    });
-
-    requestAnimationFrame(() => visual?.classList.remove('is-switching'));
-  }, 220);
-};
-
-productButtons.forEach((button, index) => {
-  button.addEventListener('click', () => {
-    if (index !== activeProduct) renderProduct(index);
-  });
-  button.setAttribute('role', 'tab');
-  button.setAttribute('aria-selected', String(index === activeProduct));
-});
-
-const stage = document.querySelector('[data-hero-stage]');
-const parallaxProduct = document.querySelector('[data-parallax-product]');
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-if (stage && parallaxProduct && !reduceMotion) {
-  stage.addEventListener('pointermove', event => {
-    const rect = stage.getBoundingClientRect();
-    const px = (event.clientX - rect.left) / rect.width - 0.5;
-    const py = (event.clientY - rect.top) / rect.height - 0.5;
-    parallaxProduct.style.transform = `rotate(${-2 + px * 2.3}deg) translate3d(${px * 14}px, ${py * 10}px, 0)`;
-  });
-
-  stage.addEventListener('pointerleave', () => {
-    parallaxProduct.style.transform = 'rotate(-2deg) translate3d(0,0,0)';
-  });
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', event => {
-    const href = anchor.getAttribute('href');
-    if (!href || href === '#') return;
-    const target = document.querySelector(href);
-    if (!target) return;
-    event.preventDefault();
-    const offset = header ? header.offsetHeight - 1 : 0;
-    const top = target.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
-  });
+function updateScrollUI() {
+  const y = window.scrollY || 0;
+  const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const ratio = clamp(y / maxScroll, 0, 1);
+
+  header?.classList.toggle('scrolled', y > 24);
+
+  if (progress) {
+    progress.style.width = `${ratio * 100}%`;
+  }
+}
+
+function setMenu(open) {
+  if (!navToggle || !mobileMenu) return;
+
+  navToggle.setAttribute('aria-expanded', String(open));
+  mobileMenu.classList.toggle('open', open);
+  header?.classList.toggle('menu-active', open);
+  document.body.classList.toggle('menu-open', open);
+}
+
+navToggle?.addEventListener('click', () => {
+  const open = navToggle.getAttribute('aria-expanded') !== 'true';
+  setMenu(open);
 });
+
+mobileMenu?.querySelectorAll('a').forEach((link) => {
+  link.addEventListener('click', () => setMenu(false));
+});
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') setMenu(false);
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 980) setMenu(false);
+});
+
+function renderProduct(index) {
+  const product = products[index];
+  if (!product || !productImage || !productVisual) return;
+
+  productVisual.classList.add('is-switching');
+
+  window.setTimeout(() => {
+    productImage.src = product.image;
+    productImage.alt = product.alt;
+    if (productCounter) productCounter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(products.length).padStart(2, '0')}`;
+    if (productKicker) productKicker.textContent = product.kicker;
+    if (productName) productName.textContent = product.name;
+    if (productDesc) productDesc.textContent = product.description;
+
+    if (productSpec) {
+      productSpec.innerHTML = `<strong>${product.specValue}</strong><span>${product.specLabel}</span>`;
+    }
+
+    productButtons.forEach((button) => {
+      const isActive = Number(button.dataset.product) === index;
+      button.classList.toggle('active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
+    });
+
+    requestAnimationFrame(() => {
+      productVisual.classList.remove('is-switching');
+    });
+  }, 180);
+}
+
+productButtons.forEach((button) => {
+  button.setAttribute('role', 'tab');
+  button.setAttribute('aria-selected', button.classList.contains('active') ? 'true' : 'false');
+  button.addEventListener('click', () => renderProduct(Number(button.dataset.product)));
+});
+
+const revealTargets = document.querySelectorAll('.reveal');
+
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      threshold: 0.12,
+      rootMargin: '0px 0px -5% 0px'
+    }
+  );
+
+  revealTargets.forEach((target) => revealObserver.observe(target));
+} else {
+  revealTargets.forEach((target) => target.classList.add('is-visible'));
+}
+
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+function updateParallax(event) {
+  if (!heroStage || !parallaxProduct || reducedMotion.matches || window.innerWidth < 981) return;
+
+  const rect = heroStage.getBoundingClientRect();
+  const x = clamp((event.clientX - rect.left) / rect.width - 0.5, -0.5, 0.5);
+  const y = clamp((event.clientY - rect.top) / rect.height - 0.5, -0.5, 0.5);
+
+  parallaxProduct.style.transform = `rotate(-2deg) translate3d(${x * 16}px, ${y * 10}px, 0) rotateX(${-y * 2.2}deg) rotateY(${x * 2.5}deg)`;
+}
+
+function resetParallax() {
+  if (!parallaxProduct) return;
+  parallaxProduct.style.transform = '';
+}
+
+heroStage?.addEventListener('pointermove', updateParallax);
+heroStage?.addEventListener('pointerleave', resetParallax);
+
+window.addEventListener('scroll', updateScrollUI, { passive: true });
+window.addEventListener('resize', updateScrollUI);
+updateScrollUI();
+
+if (year) {
+  year.textContent = new Date().getFullYear();
+}
