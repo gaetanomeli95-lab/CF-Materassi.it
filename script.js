@@ -1,133 +1,198 @@
-const header = document.querySelector("[data-header]");
-const nav = document.querySelector("[data-nav]");
-const navToggle = document.querySelector("[data-nav-toggle]");
-const lightbox = document.querySelector("[data-lightbox]");
-const lightboxImage = document.querySelector("[data-lightbox-image]");
-const lightboxTitle = document.querySelector("[data-lightbox-title]");
-const lightboxCounter = document.querySelector("[data-lightbox-counter]");
-const lightboxClose = document.querySelector("[data-lightbox-close]");
-const lightboxPrev = document.querySelector("[data-lightbox-prev]");
-const lightboxNext = document.querySelector("[data-lightbox-next]");
-const galleryButton = document.querySelector("[data-open-gallery]");
-const revealItems = document.querySelectorAll(".reveal");
-const productCards = document.querySelectorAll("[data-product]");
-const catalogPages = [
-  { src: "/catalogo-copertina.jpg", title: "Copertina catalogo" },
-  { src: "/catalogo-carol.jpg", title: "Carol" },
-  { src: "/catalogo-carol-plus.jpg", title: "Carol Plus" },
-  { src: "/catalogo-morfeus-3-strati.jpg", title: "Morfeus 3 Strati" },
-  { src: "/catalogo-morfeus-2-strati.jpg", title: "Morfeus 2 Strati" },
-  { src: "/catalogo-marta-box.jpg", title: "Marta Box" },
-  { src: "/catalogo-king-box-ortopedico.jpg", title: "King Box Ortopedico" },
-  { src: "/catalogo-andromeda-h25.jpg", title: "Andromeda H25" },
-  { src: "/catalogo-arianna-h20.jpg", title: "Arianna H20" },
-  { src: "/catalogo-accessori-supporti.jpg", title: "Accessori e supporti" },
-  { src: "/catalogo-pagina-finale.jpg", title: "Pagina finale" }
+const body = document.body;
+const header = document.querySelector('[data-header]');
+const navToggle = document.querySelector('[data-nav-toggle]');
+const mobileMenu = document.querySelector('[data-mobile-menu]');
+const progress = document.querySelector('[data-progress]');
+const year = document.querySelector('[data-year]');
+
+if (year) year.textContent = new Date().getFullYear();
+
+const closeMenu = () => {
+  if (!navToggle || !mobileMenu) return;
+  navToggle.setAttribute('aria-expanded', 'false');
+  mobileMenu.classList.remove('open');
+};
+
+if (navToggle && mobileMenu) {
+  navToggle.addEventListener('click', () => {
+    const open = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!open));
+    mobileMenu.classList.toggle('open', !open);
+  });
+
+  mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+}
+
+const onScroll = () => {
+  const y = window.scrollY;
+  if (header) header.classList.toggle('scrolled', y > 24);
+
+  if (progress) {
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? Math.min(100, (y / max) * 100) : 0;
+    progress.style.width = `${pct}%`;
+  }
+};
+
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+const revealObserver = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.12, rootMargin: '0px 0px -5% 0px' }
+);
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+const products = [
+  {
+    name: 'Carol Plus',
+    kicker: 'TOP COMFORT',
+    description: 'La proposta CF con 1600 micromolle, pensata per un’offerta di comfort evoluta.',
+    specValue: '1600',
+    specLabel: 'MICROMOLLE',
+    image: '/catalogo-carol-plus.jpg'
+  },
+  {
+    name: 'Carol',
+    kicker: 'COMFORT A MOLLE',
+    description: 'Un modello CF con 800 molle, dedicato a chi cerca una soluzione strutturata e facilmente inseribile nell’offerta professionale.',
+    specValue: '800',
+    specLabel: 'MOLLE',
+    image: '/catalogo-carol.jpg'
+  },
+  {
+    name: 'Morfeus 3 Strati',
+    kicker: 'STRUTTURA EVOLUTA',
+    description: 'Tre strati per una proposta costruita attorno alla stratificazione del comfort.',
+    specValue: '3',
+    specLabel: 'STRATI',
+    image: '/catalogo-morfeus-3-strati.jpg'
+  },
+  {
+    name: 'Morfeus 2 Strati',
+    kicker: 'EQUILIBRIO',
+    description: 'La versione a due strati della linea Morfeus, presentata nel catalogo professionale CF 2026.',
+    specValue: '2',
+    specLabel: 'STRATI',
+    image: '/catalogo-morfeus-2-strati.jpg'
+  },
+  {
+    name: 'King Box',
+    kicker: 'ORTOPEDICO A MOLLE',
+    description: 'Una soluzione della collezione CF dedicata al segmento ortopedico a molle.',
+    specValue: 'KING',
+    specLabel: 'BOX',
+    image: '/catalogo-king-box-ortopedico.jpg'
+  },
+  {
+    name: 'Marta Box',
+    kicker: 'COLLEZIONE CF',
+    description: 'Marta Box completa la gamma professionale con una proposta dedicata al mercato B2B.',
+    specValue: 'CF',
+    specLabel: 'B2B',
+    image: '/catalogo-marta-box.jpg'
+  },
+  {
+    name: 'Andromeda H25',
+    kicker: 'COLLEZIONE CF',
+    description: 'Andromeda H25, una delle proposte presenti nel catalogo professionale CF Materassi 2026.',
+    specValue: 'H25',
+    specLabel: 'ANDROMEDA',
+    image: '/catalogo-andromeda-h25.jpg'
+  },
+  {
+    name: 'Arianna H20',
+    kicker: 'COLLEZIONE CF',
+    description: 'Arianna H20, parte della gamma CF dedicata a rivenditori e operatori professionali.',
+    specValue: 'H20',
+    specLabel: 'ARIANNA',
+    image: '/catalogo-arianna-h20.jpg'
+  }
 ];
-let activeLightboxItems = [];
-let activeLightboxIndex = 0;
 
-const setHeaderState = () => {
-  header.classList.toggle("is-scrolled", window.scrollY > 24);
-};
+const visual = document.querySelector('.product-visual');
+const productImage = document.querySelector('[data-product-image]');
+const productName = document.querySelector('[data-product-name]');
+const productKicker = document.querySelector('[data-product-kicker]');
+const productDesc = document.querySelector('[data-product-desc]');
+const productSpec = document.querySelector('[data-product-spec]');
+const productCounter = document.querySelector('[data-product-counter]');
+const productButtons = [...document.querySelectorAll('[data-product]')];
 
-const closeNavigation = () => {
-  nav.classList.remove("is-open");
-  navToggle.classList.remove("is-open");
-  navToggle.setAttribute("aria-expanded", "false");
-};
+let activeProduct = 0;
+let swapTimer;
 
-const renderLightbox = () => {
-  const item = activeLightboxItems[activeLightboxIndex];
-  const hasMultipleItems = activeLightboxItems.length > 1;
-  lightboxImage.src = item.src;
-  lightboxImage.alt = item.title;
-  lightboxTitle.textContent = item.title;
-  lightboxCounter.textContent = hasMultipleItems ? `Pagina ${activeLightboxIndex + 1} di ${activeLightboxItems.length}` : "";
-  lightboxPrev.classList.toggle("is-hidden", !hasMultipleItems);
-  lightboxNext.classList.toggle("is-hidden", !hasMultipleItems);
-};
+const renderProduct = index => {
+  if (!products[index] || index === activeProduct && productImage?.src.includes(products[index].image)) return;
+  activeProduct = index;
+  const item = products[index];
 
-const openLightbox = (items, startIndex = 0) => {
-  activeLightboxItems = items;
-  activeLightboxIndex = startIndex;
-  renderLightbox();
-  lightbox.classList.add("is-open");
-  lightbox.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-};
+  if (visual) visual.classList.add('is-switching');
+  clearTimeout(swapTimer);
 
-const closeLightbox = () => {
-  lightbox.classList.remove("is-open");
-  lightbox.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-};
-
-const changeLightboxPage = (direction) => {
-  if (activeLightboxItems.length <= 1) {
-    return;
-  }
-  activeLightboxIndex = (activeLightboxIndex + direction + activeLightboxItems.length) % activeLightboxItems.length;
-  renderLightbox();
-};
-
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("is-visible");
-      revealObserver.unobserve(entry.target);
+  swapTimer = setTimeout(() => {
+    if (productImage) {
+      productImage.src = item.image;
+      productImage.alt = item.name;
     }
+    if (productName) productName.textContent = item.name;
+    if (productKicker) productKicker.textContent = item.kicker;
+    if (productDesc) productDesc.textContent = item.description;
+    if (productSpec) productSpec.innerHTML = `<strong>${item.specValue}</strong><span>${item.specLabel}</span>`;
+    if (productCounter) productCounter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(products.length).padStart(2, '0')}`;
+
+    productButtons.forEach((button, buttonIndex) => {
+      button.classList.toggle('active', buttonIndex === index);
+      button.setAttribute('aria-selected', String(buttonIndex === index));
+    });
+
+    requestAnimationFrame(() => visual?.classList.remove('is-switching'));
+  }, 220);
+};
+
+productButtons.forEach((button, index) => {
+  button.addEventListener('click', () => {
+    if (index !== activeProduct) renderProduct(index);
   });
-}, {
-  threshold: 0.16
+  button.setAttribute('role', 'tab');
+  button.setAttribute('aria-selected', String(index === activeProduct));
 });
 
-revealItems.forEach((item) => revealObserver.observe(item));
+const stage = document.querySelector('[data-hero-stage]');
+const parallaxProduct = document.querySelector('[data-parallax-product]');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-window.addEventListener("scroll", setHeaderState, { passive: true });
-setHeaderState();
-
-navToggle.addEventListener("click", () => {
-  const isOpen = nav.classList.toggle("is-open");
-  navToggle.classList.toggle("is-open", isOpen);
-  navToggle.setAttribute("aria-expanded", String(isOpen));
-});
-
-nav.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", closeNavigation);
-});
-
-productCards.forEach((card) => {
-  card.addEventListener("click", () => {
-    openLightbox([{ src: card.dataset.image, title: card.dataset.product }]);
+if (stage && parallaxProduct && !reduceMotion) {
+  stage.addEventListener('pointermove', event => {
+    const rect = stage.getBoundingClientRect();
+    const px = (event.clientX - rect.left) / rect.width - 0.5;
+    const py = (event.clientY - rect.top) / rect.height - 0.5;
+    parallaxProduct.style.transform = `rotate(${-2 + px * 2.3}deg) translate3d(${px * 14}px, ${py * 10}px, 0)`;
   });
-});
 
-galleryButton.addEventListener("click", () => {
-  openLightbox(catalogPages);
-});
+  stage.addEventListener('pointerleave', () => {
+    parallaxProduct.style.transform = 'rotate(-2deg) translate3d(0,0,0)';
+  });
+}
 
-lightboxClose.addEventListener("click", closeLightbox);
-lightboxPrev.addEventListener("click", () => changeLightboxPage(-1));
-lightboxNext.addEventListener("click", () => changeLightboxPage(1));
-
-lightbox.addEventListener("click", (event) => {
-  if (event.target === lightbox) {
-    closeLightbox();
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (!lightbox.classList.contains("is-open")) {
-    return;
-  }
-  if (event.key === "Escape") {
-    closeLightbox();
-  }
-  if (event.key === "ArrowLeft") {
-    changeLightboxPage(-1);
-  }
-  if (event.key === "ArrowRight") {
-    changeLightboxPage(1);
-  }
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', event => {
+    const href = anchor.getAttribute('href');
+    if (!href || href === '#') return;
+    const target = document.querySelector(href);
+    if (!target) return;
+    event.preventDefault();
+    const offset = header ? header.offsetHeight - 1 : 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
 });
