@@ -10,30 +10,54 @@ function helix(){
 function springCore(){
   const group=new THREE.Group(),cols=40,rows=40,total=1600;
   const pocketGeo=new THREE.CylinderGeometry(.064,.064,.80,12,1,true),springGeo=helix();
-  const rearPocketMat=new THREE.MeshPhysicalMaterial({color:0xf4f1eb,roughness:.98,transparent:true,opacity:.50,side:THREE.DoubleSide,vertexColors:true,depthWrite:false});
-  const frontPocketMat=new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:.97,transparent:true,opacity:.24,side:THREE.DoubleSide,vertexColors:true,depthWrite:false});
-  const rearSpringMat=new THREE.MeshPhysicalMaterial({color:0xc9c4bb,metalness:.76,roughness:.23,vertexColors:true});
-  const frontSpringMat=rearSpringMat.clone();frontSpringMat.color.set(0xf0ece4);frontSpringMat.emissive.set(0x261c14);frontSpringMat.emissiveIntensity=.22;
+
+  // Carol Plus: pockets must read as light fabric sleeves, never as a black block.
+  const rearPocketMat=new THREE.MeshPhysicalMaterial({
+    color:0xf7f6f2,roughness:.92,metalness:0,transparent:true,opacity:.70,
+    transmission:0,side:THREE.DoubleSide,vertexColors:true,depthWrite:false
+  });
+  const frontPocketMat=new THREE.MeshPhysicalMaterial({
+    color:0xffffff,roughness:.88,metalness:0,transparent:true,opacity:.78,
+    transmission:0,side:THREE.DoubleSide,vertexColors:true,depthWrite:false
+  });
+
+  // Satin steel inside each pocket: deliberately bright so the spring shape remains legible.
+  const rearSpringMat=new THREE.MeshPhysicalMaterial({
+    color:0xe7e8e7,metalness:.52,roughness:.34,vertexColors:true,
+    emissive:new THREE.Color(0x7e807f),emissiveIntensity:.26
+  });
+  const frontSpringMat=new THREE.MeshPhysicalMaterial({
+    color:0xf7f7f5,metalness:.44,roughness:.28,vertexColors:true,
+    emissive:new THREE.Color(0xbfc1bf),emissiveIntensity:.58
+  });
+
   const rearRows=28,rearCount=cols*rearRows,frontCount=total-rearCount;
   const pocketsRear=new THREE.InstancedMesh(pocketGeo,rearPocketMat,rearCount),pocketsFront=new THREE.InstancedMesh(pocketGeo,frontPocketMat,frontCount);
   const springsRear=new THREE.InstancedMesh(springGeo,rearSpringMat,rearCount),springsFront=new THREE.InstancedMesh(springGeo,frontSpringMat,frontCount);
   const dummy=new THREE.Object3D(),xSpan=5.04,zSpan=2.58;let ri=0,fi=0;
-  const zoneScale=[.94,.97,1.00,1.08,1.00,.97,.94],palette=[0x857b70,0x978b7b,0xad9b82,0xc6ae85,0xad9b82,0x978b7b,0x857b70];
+
+  // Seven differentiated zones: subtle pearl-grey variation, not dark colour bands.
+  const zoneScale=[.94,.97,1.00,1.08,1.00,.97,.94];
+  const pocketPalette=[0xf8f7f3,0xf1f0ec,0xe9e9e5,0xffffff,0xe9e9e5,0xf1f0ec,0xf8f7f3];
+  const springPalette=[0xd9dcdb,0xe2e4e3,0xebedec,0xf7f8f7,0xebedec,0xe2e4e3,0xd9dcdb];
+
   for(let z=0;z<rows;z++)for(let x=0;x<cols;x++){
     const px=-xSpan/2+x*xSpan/(cols-1),pz=-zSpan/2+z*zSpan/(rows-1),zone=Math.min(6,Math.floor(x/cols*7));
     dummy.position.set(px,0,pz);dummy.scale.set(1,zoneScale[zone],1);dummy.updateMatrix();
-    const c=new THREE.Color(palette[zone]);
+    const pocketColor=new THREE.Color(pocketPalette[zone]);
+    const springColor=new THREE.Color(springPalette[zone]);
     if(z<rearRows){
       pocketsRear.setMatrixAt(ri,dummy.matrix);springsRear.setMatrixAt(ri,dummy.matrix);
-      pocketsRear.setColorAt(ri,c.clone().lerp(new THREE.Color(0xffffff),.76));springsRear.setColorAt(ri,c.clone().lerp(new THREE.Color(0xe7e2da),.28));ri++;
+      pocketsRear.setColorAt(ri,pocketColor);springsRear.setColorAt(ri,springColor);ri++;
     }else{
       pocketsFront.setMatrixAt(fi,dummy.matrix);springsFront.setMatrixAt(fi,dummy.matrix);
-      pocketsFront.setColorAt(fi,c.clone().lerp(new THREE.Color(0xffffff),.84));springsFront.setColorAt(fi,c.clone().lerp(new THREE.Color(0xffffff),.40));fi++;
+      pocketsFront.setColorAt(fi,pocketColor.clone().lerp(new THREE.Color(0xffffff),.16));
+      springsFront.setColorAt(fi,springColor.clone().lerp(new THREE.Color(0xffffff),.24));fi++;
     }
   }
   [pocketsRear,pocketsFront,springsRear,springsFront].forEach(m=>{m.instanceMatrix.needsUpdate=true;if(m.instanceColor)m.instanceColor.needsUpdate=true;group.add(m);});
 
-  const boxMat=new THREE.MeshPhysicalMaterial({color:0xf0ede7,roughness:.83});
+  const boxMat=new THREE.MeshPhysicalMaterial({color:0xf3f0ea,roughness:.78});
   const back=new THREE.Mesh(new THREE.BoxGeometry(5.72,.80,.32),boxMat);back.position.z=-1.48;group.add(back);
   const left=new THREE.Mesh(new THREE.BoxGeometry(.32,.80,2.64),boxMat);left.position.x=-2.70;group.add(left);
   const right=new THREE.Mesh(new THREE.BoxGeometry(.32,.80,2.64),boxMat);right.position.x=2.70;group.add(right);
