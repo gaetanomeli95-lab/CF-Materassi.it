@@ -2,9 +2,6 @@ const header = document.querySelector('[data-header]');
 const toggle = document.querySelector('[data-nav-toggle]');
 const menu = document.querySelector('[data-mobile-menu]');
 const progress = document.querySelector('[data-progress]');
-const inside = document.querySelector('[data-inside-section]');
-const insideMeter = document.querySelector('[data-inside-meter]');
-const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 
 function setMenu(open){
   toggle?.classList.toggle('open', open);
@@ -35,21 +32,7 @@ function updateScrollUI(){
   if(progress) progress.style.width = `${(y / max) * 100}%`;
   header?.classList.toggle('scrolled', y > 30);
 
-  if(inside){
-    const rect = inside.getBoundingClientRect();
-    const travel = Math.max(1, inside.offsetHeight - window.innerHeight);
-    const p = clamp((-rect.top) / travel, 0, 1);
-    document.documentElement.style.setProperty('--inside-progress', p.toFixed(4));
-    if(insideMeter) insideMeter.style.height = `${p * 100}%`;
 
-    const steps = [...inside.querySelectorAll('[data-step]')];
-    const active = Math.min(steps.length - 1, Math.floor(p * steps.length));
-    steps.forEach((step, i) => step.classList.toggle('is-active', i === active));
-
-    window.dispatchEvent(new CustomEvent('cf:inside-progress', {
-      detail: { progress: p, active }
-    }));
-  }
 }
 
 let ticking = false;
@@ -66,3 +49,18 @@ window.addEventListener('resize', updateScrollUI,{passive:true});
 updateScrollUI();
 
 document.querySelector('[data-year]')?.replaceChildren(String(new Date().getFullYear()));
+
+// Native details stay usable without JavaScript. Focus/hover links each row to
+// its numbered location without relying on motion, colour, or scroll position.
+const layerRows = document.querySelectorAll('[data-layer]');
+function highlightLayer(name) {
+  document.querySelectorAll('[data-marker]').forEach(marker => {
+    marker.classList.toggle('is-active', marker.dataset.marker === name);
+  });
+}
+layerRows.forEach(row => {
+  row.addEventListener('pointerenter', () => highlightLayer(row.dataset.layer));
+  row.addEventListener('pointerleave', () => highlightLayer(null));
+  row.addEventListener('focusin', () => highlightLayer(row.dataset.layer));
+  row.addEventListener('focusout', () => highlightLayer(null));
+});
