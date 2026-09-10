@@ -1,0 +1,209 @@
+/* CF Materassi — V6 brand balance
+   CF is the brand. Carol Plus is one technical case study inside a wider professional range. */
+
+/* Hero: retain readability, but let the campaign photograph breathe. */
+.hero-higgsfield{
+  background:
+    linear-gradient(90deg,rgba(4,4,4,.67) 0%,rgba(4,4,4,.47) 24%,rgba(4,4,4,.17) 46%,rgba(4,4,4,.025) 70%,rgba(4,4,4,0) 100%),
+    linear-gradient(180deg,rgba(0,0,0,.015) 0%,rgba(0,0,0,.025) 62%,rgba(0,0,0,.17) 100%),
+    url("https://d8j0ntlcm91z4.cloudfront.net/user_3J5bcdAgqMsyUqzT0zx6yGprNjK/hf_20260909_121804_336cd794-50da-41df-9527-c2e08fd40906.png") 57% 50%/cover no-repeat !important;
+  filter:saturate(.99) contrast(1.01) brightness(1.09) !important;
+}
+.hero-vignette{
+  background:
+    radial-gradient(circle at 72% 50%,transparent 0 38%,rgba(0,0,0,.025) 58%,rgba(0,0,0,.24) 100%),
+    linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.14)) !important;
+}
+.hero::after{
+  content:"CF MATERASSI   ·   PROFESSIONAL SLEEP SYSTEMS" !important;
+  background:rgba(7,7,7,.18) !important;
+  border-color:rgba(255,255,255,.22) !important;
+}
+.hero h1 span{color:rgba(244,240,232,.72) !important}
+.hero-lead{color:rgba(255,255,255,.82) !important}
+
+/* ---- CF GAMMA: placed before the Carol Plus digital twin ---- */
+.cf-gamma{
+  position:relative;
+  padding:132px var(--x) 118px;
+  background:#f2efe8;
+  overflow:hidden;
+}
+.cf-gamma::before{
+  content:"CF";
+  position:absolute;
+  right:-.04em;
+  top:-.18em;
+  font:800 clamp(210px,31vw,520px)/1 "Manrope",sans-serif;
+  letter-spacing:-.12em;
+  color:rgba(15,14,12,.025);
+  pointer-events:none;
+}
+.gamma-head{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1.35fr .65fr;
+  gap:8vw;
+  align-items:end;
+  margin-bottom:68px;
+}
+.gamma-head h2{
+  margin:0;
+  max-width:1040px;
+  font:700 clamp(52px,6.8vw,112px)/.91 "Manrope",sans-serif;
+  letter-spacing:-.065em;
+}
+.gamma-head h2 span{color:#99938a}
+.gamma-head>p:last-child{
+  margin:0 0 8px;
+  max-width:480px;
+  color:#5e5952;
+  font-size:16px;
+  line-height:1.72;
+}
+.gamma-grid{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1.12fr .94fr .94fr;
+  gap:16px;
+  align-items:stretch;
+}
+.gamma-card{
+  position:relative;
+  min-height:590px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  border:1px solid rgba(15,14,12,.09);
+  background:#e9e5dd;
+  isolation:isolate;
+}
+.gamma-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent 48%,rgba(7,7,7,.05) 100%);
+}
+.gamma-media{
+  flex:1 1 auto;
+  min-height:420px;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  transition:transform .8s cubic-bezier(.2,.7,.2,1),filter .6s ease;
+}
+.gamma-card:hover .gamma-media{transform:scale(1.025)}
+.gamma-carol{background:#0c0c0c;color:#fff;border-color:rgba(255,255,255,.08)}
+.gamma-carol .gamma-media{
+  background-image:
+    linear-gradient(180deg,rgba(5,5,5,.01),rgba(5,5,5,.19)),
+    url("https://d8j0ntlcm91z4.cloudfront.net/user_3J5bcdAgqMsyUqzT0zx6yGprNjK/hf_20260909_115031_209c39c0-fdfc-4ec6-ad15-950ef0f14a1e.png");
+  background-position:58% 48%;
+  filter:brightness(1.06) saturate(.96);
+}
+.gamma-marta .gamma-media{
+  background-image:url("https://d2ol7oe51mr4n9.cloudfront.net/user_3J5bcdAgqMsyUqzT0zx6yGprNjK/df2c4bae-8d53-40d5-a8d7-53dee6fe6b91.png");
+  background-size:94% auto;
+  background-color:#f7f5f0;
+}
+.gamma-morfeus .gamma-media{
+  background-image:url("https://d2ol7oe51mr4n9.cloudfront.net/user_3J5bcdAgqMsyUqzT0zx6yGprNjK/789fd364-e8d0-48da-b360-073092c5239a.png");
+  background-size:96% auto;
+  background-color:#f7f5f0;
+}
+.gamma-card-copy{
+  min-height:166px;
+  padding:25px 27px 27px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  grid-template-areas:"kicker index" "title title" "meta link";
+  gap:7px 16px;
+  align-items:end;
+  background:rgba(242,239,232,.94);
+  backdrop-filter:blur(10px);
+}
+.gamma-carol .gamma-card-copy{background:rgba(8,8,8,.88)}
+.gamma-kicker{grid-area:kicker;font-size:9px;font-weight:800;letter-spacing:.18em;color:#8b744e}
+.gamma-index{grid-area:index;font-size:9px;letter-spacing:.16em;color:#8f8980}
+.gamma-card h3{grid-area:title;margin:4px 0 6px;font:700 clamp(28px,2.8vw,46px)/.95 "Manrope",sans-serif;letter-spacing:-.055em}
+.gamma-meta{grid-area:meta;font-size:12px;color:#69635b;letter-spacing:.02em}
+.gamma-card a{grid-area:link;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;white-space:nowrap}
+.gamma-carol .gamma-meta{color:rgba(255,255,255,.56)}
+.gamma-carol .gamma-index{color:rgba(255,255,255,.42)}
+.gamma-carol .gamma-kicker{color:#d0b27a}
+.gamma-more{
+  position:relative;
+  z-index:2;
+  margin-top:34px;
+  padding:24px 0 0;
+  border-top:1px solid rgba(12,12,12,.13);
+  display:flex;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.gamma-more>span:first-child{font-size:9px;font-weight:800;letter-spacing:.18em;color:#84765f}
+.gamma-more-list{display:flex;gap:14px 22px;flex-wrap:wrap;font:600 13px "Manrope",sans-serif;color:#302e2a}
+.gamma-more-list span:not(:last-child)::after{content:"·";margin-left:22px;color:#b69058}
+
+/* The Carol section is a technology case study, not the identity of the entire site. */
+.manifesto{padding-top:112px !important;padding-bottom:125px !important}
+.manifesto::before{content:"CASE STUDY / DIGITAL TWIN / CAROL PLUS" !important}
+
+/* 1IM: make the existing campaign asset truly visible. */
+.one-im{background:#0d0d0c !important}
+.one-im::after{
+  inset:0 0 0 37% !important;
+  background:
+    linear-gradient(90deg,rgba(13,13,12,.93) 0%,rgba(13,13,12,.34) 24%,rgba(13,13,12,.055) 58%,rgba(13,13,12,.01) 100%),
+    url('/sfondo-ignifugo-classe-1im.png') center/cover no-repeat !important;
+  opacity:.76 !important;
+  filter:grayscale(.05) saturate(.94) contrast(.98) brightness(1.12) !important;
+}
+.one-im-ring{opacity:.62}
+
+/* Bottom of page = complete range, not another three-model Carol-centric statement. */
+.collection-names{font-size:clamp(18px,2.2vw,36px) !important;gap:15px !important}
+
+@media(max-width:1080px){
+  .gamma-head{grid-template-columns:1fr;gap:28px}
+  .gamma-grid{grid-template-columns:1fr 1fr}
+  .gamma-carol{grid-column:1/3;min-height:650px}
+  .gamma-carol .gamma-media{min-height:480px}
+  .one-im::after{inset:0 0 0 31% !important}
+}
+
+@media(max-width:700px){
+  .hero-higgsfield{
+    background:
+      linear-gradient(180deg,rgba(4,4,4,.025) 0%,rgba(4,4,4,.055) 43%,rgba(4,4,4,.48) 72%,rgba(5,5,5,.71) 100%),
+      url("https://d8j0ntlcm91z4.cloudfront.net/user_3J5bcdAgqMsyUqzT0zx6yGprNjK/hf_20260909_121804_336cd794-50da-41df-9527-c2e08fd40906.png") 69% 31%/auto 72% no-repeat !important;
+    background-color:#080808 !important;
+    filter:saturate(.99) contrast(1) brightness(1.10) !important;
+  }
+  .hero-vignette{background:linear-gradient(180deg,transparent 0 45%,rgba(0,0,0,.12) 58%,rgba(0,0,0,.56) 100%) !important}
+  .cf-gamma{padding:88px 20px 82px}
+  .gamma-head{margin-bottom:42px}
+  .gamma-head h2{font-size:clamp(44px,12vw,66px)}
+  .gamma-head>p:last-child{font-size:15px}
+  .gamma-grid{grid-template-columns:1fr;gap:12px}
+  .gamma-card,.gamma-carol{grid-column:auto;min-height:510px}
+  .gamma-media,.gamma-carol .gamma-media{min-height:350px}
+  .gamma-card-copy{min-height:150px;padding:21px 21px 23px}
+  .gamma-card h3{font-size:34px}
+  .gamma-more{align-items:flex-start;display:grid}
+  .gamma-more-list{gap:10px 0;display:grid}
+  .gamma-more-list span:not(:last-child)::after{display:none}
+  .one-im::after{
+    inset:27% 0 0 0 !important;
+    opacity:.61 !important;
+    background:
+      linear-gradient(180deg,rgba(13,13,12,.05),rgba(13,13,12,.16) 55%,rgba(13,13,12,.72) 100%),
+      url('/sfondo-ignifugo-classe-1im.png') center/cover no-repeat !important;
+    filter:saturate(.95) contrast(.98) brightness(1.12) !important;
+  }
+}
