@@ -1,3 +1,14 @@
+// Photo-led V5 direction: load the visual refinement before initializing page interactions.
+const photoDirection = document.createElement('link');
+photoDirection.rel = 'stylesheet';
+photoDirection.href = '/photo-direction-v5.css?v=1';
+document.head.appendChild(photoDirection);
+
+// The homepage now uses the Higgsfield campaign still as the clear hero image.
+// Remove the redundant hero WebGL canvas before its module initializes; the
+// interactive Carol Plus 3D remains in the dedicated technical section below.
+document.querySelector('#hero-carol-webgl')?.remove();
+
 const header = document.querySelector('[data-header]');
 const toggle = document.querySelector('[data-nav-toggle]');
 const menu = document.querySelector('[data-mobile-menu]');
