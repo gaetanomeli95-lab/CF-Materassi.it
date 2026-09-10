@@ -13,9 +13,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=cf-v2-carol-exploded-4">
-  <link rel="stylesheet" href="carol-plus.css?v=cf-v2-carol-exploded-4">
-  <link rel="stylesheet" href="hero-carol-v4.css?v=cf-v2-carol-exploded-4">
+  <link rel="stylesheet" href="styles.css?v=carol-refine-1">
+  <link rel="stylesheet" href="carol-plus.css?v=carol-refine-1">
+  <link rel="stylesheet" href="hero-carol-v4.css?v=carol-refine-1">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -47,7 +47,7 @@
   <main>
     <section class="hero" id="home">
       <div class="hero-higgsfield" aria-hidden="true"></div>
-      <canvas id="hero-carol-webgl" class="hero-carol-webgl" aria-hidden="true"></canvas>
+      <canvas id="hero-carol-webgl" class="hero-carol-webgl" role="img" aria-label="Modello 3D Carol Plus con tessuto floreale chiaro, fascia traspirante beige e velluto marrone"></canvas>
       <div class="hero-vignette" aria-hidden="true"></div>
 
       <div class="hero-copy reveal">
@@ -77,7 +77,7 @@
     </section>
 
     <section class="manifesto section">
-      <p class="eyebrow dark reveal">NON UN RENDER GENERICO. IL PRODOTTO REALE.</p>
+      <p class="eyebrow dark reveal">CAROL PLUS · MATERIALI E STRUTTURA</p>
       <div class="manifesto-grid">
         <h2 class="reveal">Fuori è Carol Plus.<br><span>Dentro, quello che c'è davvero.</span></h2>
         <p class="reveal">La struttura tecnica viene ricostruita in 3D partendo dalla scheda reale: comfort package, box perimetrale e 1600 micromolle diventano un unico digital twin interattivo.</p>
@@ -86,14 +86,14 @@
 
     <section class="inside carol-technical" id="inside" data-inside-section style="--x:26px">
       <div class="inside-sticky">
-        <canvas id="carol-webgl" class="inside-webgl" aria-label="Esploso 3D interattivo verificato del Carol Plus"></canvas>
+        <canvas id="carol-webgl" class="inside-webgl" aria-label="Esploso 3D interattivo della struttura Carol Plus"></canvas>
         <div class="inside-overlay" aria-hidden="true"></div>
 
-        <div class="carol-tech-badge" aria-hidden="true"><i></i><b>H27</b><span>VERIFIED BUILD</span></div>
+        <div class="carol-tech-badge" aria-hidden="true"><i></i><b>H27</b><span>CAROL PLUS</span></div>
         <div class="carol-zone-legend" aria-hidden="true"><span>7 ZONE</span><div class="carol-zone-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
 
         <div class="inside-copy">
-          <div class="inside-index">CAROL PLUS · H27 · VERIFIED DIGITAL TWIN</div>
+          <div class="inside-index">CAROL PLUS · H27 · STRUTTURA 3D</div>
           <div class="inside-step is-active" data-step="0">
             <span>01 · ASSEMBLATO</span>
             <h3>Un solo Carol Plus.</h3>
@@ -233,9 +233,9 @@
     <span>© <span data-year></span> CF Materassi</span>
   </footer>
 
-  <script src="script.js?v=cf-v2-carol-exploded-4" defer></script>
-  <script type="module" src="experience.js?v=cf-v2-carol-exploded-4"></script>
-  <script type="module" src="hero-carol-v4.js?v=cf-v2-carol-exploded-4"></script>
-  <script type="module" src="carol-plus-3d-v2.js?v=cf-v2-carol-exploded-4"></script>
+  <script src="script.js?v=carol-refine-1" defer></script>
+  <!-- The two Carol Plus scenes share the same model; the obsolete generic scene is no longer loaded. -->
+  <script type="module" src="hero-carol-v4.js?v=carol-refine-1"></script>
+  <script type="module" src="carol-plus-3d-v2.js?v=carol-refine-1"></script>
 </body>
 </html>

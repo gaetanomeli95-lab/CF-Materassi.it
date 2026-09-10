@@ -1,107 +1,52 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
-import { buildCarolPlusModel } from './carol-plus-model-v3.js';
+import {buildCarolPlusModel} from './carol-plus-model-v3.js?v=carol-refine-1';
+import {fitCarolCamera} from './carol-plus-view.js?v=carol-refine-1';
 
-const canvas = document.querySelector('#hero-carol-webgl');
-if (canvas) {
-  const mobile = matchMedia('(max-width:700px)').matches;
-  const reducedMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const DPR = Math.min(devicePixelRatio || 1, mobile ? 1.15 : 1.55);
-
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    alpha: true,
-    antialias: !mobile,
-    powerPreference: 'high-performance'
-  });
-  renderer.setPixelRatio(DPR);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.18;
-
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x070707, .032);
-
-  const camera = new THREE.PerspectiveCamera(mobile ? 47 : 33, 1, .1, 60);
-  camera.position.set(mobile ? 5.3 : 8.2, mobile ? 4.3 : 4.9, mobile ? 11.8 : 12.6);
-
-  // Warm studio lighting so the cream top, beige breathable band and brown velvet
-  // read as materials instead of a white silhouette.
-  scene.add(new THREE.HemisphereLight(0xfff6e9, 0x11100f, 2.05));
-  const key = new THREE.DirectionalLight(0xfff1db, 7.2);
-  key.position.set(-5.5, 9.5, 7.5);
-  scene.add(key);
-  const fill = new THREE.DirectionalLight(0xd3b58c, 4.1);
-  fill.position.set(7, 3.5, 5);
-  scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 2.8);
-  rim.position.set(-4, 4, -6);
-  scene.add(rim);
-  const sideWarm = new THREE.PointLight(0xb57c49, 22, 13, 2);
-  sideWarm.position.set(5.5, -.4, 4.8);
-  scene.add(sideWarm);
-
-  const { system } = buildCarolPlusModel({ mobile });
-  system.position.set(mobile ? .55 : 2.25, mobile ? -.45 : -.55, 0);
-  system.rotation.set(-.11, mobile ? -.28 : -.48, -.015);
-  system.scale.setScalar(mobile ? .73 : 1.04);
+const canvas=document.querySelector('#hero-carol-webgl');
+if(canvas){
+  const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)');
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
+  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(35,1,.1,100);
+  // Neutral, moderate light preserves brown velvet and the photographed cream
+  // textile. The former key + fill values washed these surfaces towards white.
+  scene.add(new THREE.HemisphereLight(0xfff7ed,0x39322a,1.3));
+  const key=new THREE.DirectionalLight(0xfff6e9,2.7);key.position.set(-4,7,6);scene.add(key);
+  const fill=new THREE.DirectionalLight(0xe6edf6,.8);fill.position.set(5,2,4);scene.add(fill);
+  const rim=new THREE.DirectionalLight(0xe4c9a1,1.3);rim.position.set(2,5,-6);scene.add(rim);
+  const {system}=buildCarolPlusModel({mobile:matchMedia('(max-width:700px)').matches});
   scene.add(system);
-
-  // Subtle premium scene framing. No photo layer behind the product.
-  const ringMat = new THREE.MeshBasicMaterial({ color: 0xc4a36e, transparent: true, opacity: .15 });
-  const ringA = new THREE.Mesh(new THREE.TorusGeometry(4.5, .018, 8, 180), ringMat);
-  ringA.rotation.x = Math.PI / 2.25;
-  ringA.position.set(system.position.x, -1.35, -.3);
-  scene.add(ringA);
-  const ringB = ringA.clone();
-  ringB.material = ringMat.clone();
-  ringB.material.opacity = .07;
-  ringB.scale.setScalar(1.4);
-  scene.add(ringB);
-
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(24, 24),
-    new THREE.MeshPhysicalMaterial({ color: 0x070707, roughness: .96, transparent: true, opacity: .62 })
-  );
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -2.25;
-  scene.add(floor);
-
-  const pointer = { x: 0, y: 0 };
-  const smooth = { x: 0, y: 0 };
-  addEventListener('pointermove', e => {
-    pointer.x = (e.clientX / innerWidth - .5) * 2;
-    pointer.y = (e.clientY / innerHeight - .5) * 2;
-  }, { passive: true });
-
-  function resize() {
-    const r = canvas.getBoundingClientRect();
-    renderer.setSize(r.width, r.height, false);
-    camera.aspect = r.width / r.height;
-    camera.updateProjectionMatrix();
+  const pointer={x:0,y:0},smooth={x:0,y:0};
+  let visible=true,frameId=0;
+  const direction=new THREE.Vector3(7,5,9);
+  function render(){
+    frameId=0;
+    if(!visible||document.hidden)return;
+    if(!reducedMotion.matches){
+      smooth.x+=(pointer.x-smooth.x)*.045;smooth.y+=(pointer.y-smooth.y)*.045;
+      system.rotation.y=smooth.x*.10;system.rotation.x=-smooth.y*.025;
+    }else{system.rotation.set(0,0,0);}
+    fitCarolCamera(camera,system,direction,1.10);renderer.render(scene,camera);
+    if(!reducedMotion.matches)frameId=requestAnimationFrame(render);
+  }
+  function requestRender(){if(!frameId)frameId=requestAnimationFrame(render);}
+  canvas.addEventListener('pointermove',e=>{
+    const rect=canvas.getBoundingClientRect();
+    pointer.x=(e.clientX-rect.left)/rect.width-.5;pointer.y=(e.clientY-rect.top)/rect.height-.5;
+    requestRender();
+  },{passive:true});
+  canvas.addEventListener('pointerleave',()=>{pointer.x=0;pointer.y=0;requestRender();});
+  function resize(){
+    const rect=canvas.getBoundingClientRect();if(!rect.width||!rect.height)return;
+    renderer.setSize(rect.width,rect.height,false);camera.aspect=rect.width/rect.height;camera.updateProjectionMatrix();requestRender();
   }
   new ResizeObserver(resize).observe(canvas);
+  new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;requestRender();}).observe(canvas);
+  document.addEventListener('visibilitychange',requestRender);
+  reducedMotion.addEventListener('change',requestRender);
+  // A late-loaded photograph must also redraw when reduced motion is enabled.
+  window.addEventListener('cf:carol-texture-ready',requestRender);
   resize();
-
-  const clock = new THREE.Clock();
-  function frame() {
-    const t = clock.getElapsedTime();
-    smooth.x += (pointer.x - smooth.x) * .035;
-    smooth.y += (pointer.y - smooth.y) * .035;
-    const scroll = Math.min(1, scrollY / Math.max(1, innerHeight));
-
-    if (!reducedMotion) {
-      system.position.y = (mobile ? -.45 : -.55) + Math.sin(t * .75) * .055 - scroll * .16;
-      system.rotation.y = (mobile ? -.28 : -.48) + smooth.x * .055 + scroll * .10;
-      system.rotation.x = -.11 - smooth.y * .025;
-      ringA.rotation.z = t * .018;
-      ringB.rotation.z = -t * .010;
-    }
-
-    camera.position.x = (mobile ? 5.3 : 8.2) + smooth.x * .11;
-    camera.position.y = (mobile ? 4.3 : 4.9) - smooth.y * .08;
-    camera.lookAt(system.position.x, -.12, 0);
-    renderer.render(scene, camera);
-    requestAnimationFrame(frame);
-  }
-  frame();
 }

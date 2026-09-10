@@ -80,16 +80,26 @@ export function createCarolMaterials(){
     felt:new THREE.MeshPhysicalMaterial({color:0x5f5c58,roughness:1}),
     poly:new THREE.MeshPhysicalMaterial({color:0xeee4d3,roughness:.84}),
     memory:new THREE.MeshPhysicalMaterial({color:0xd9b84b,roughness:.77}),
-    brown:new THREE.MeshPhysicalMaterial({color:0x4a3029,roughness:.91,sheen:1,sheenColor:new THREE.Color(0x8a6656),sheenRoughness:.78}),
-    beige:new THREE.MeshPhysicalMaterial({map:tex.breathe,color:0xb19c83,roughness:.83,bumpMap:tex.breathe,bumpScale:.04}),
+    brown:new THREE.MeshPhysicalMaterial({color:0x60483b,roughness:.91,sheen:1,sheenColor:new THREE.Color(0x8a6656),sheenRoughness:.78}),
+    beige:new THREE.MeshPhysicalMaterial({map:tex.breathe,color:0xe0cfb6,roughness:.83,bumpMap:tex.breathe,bumpScale:.012}),
     pipe:new THREE.MeshPhysicalMaterial({color:0xe5d8c8,roughness:.75})
   };
 }
 
 export function frame(w,d,h,t,mat){
-  const g=new THREE.Group();
-  const a=new THREE.Mesh(new THREE.BoxGeometry(w,h,t),mat),b=a.clone();a.position.z=d/2-t/2;b.position.z=-d/2+t/2;
-  const c=new THREE.Mesh(new THREE.BoxGeometry(t,h,d-2*t),mat),e=c.clone();c.position.x=w/2-t/2;e.position.x=-w/2+t/2;g.add(a,b,c,e);return g;
+  // A closed, rounded textile shell, not four intersecting rectangular bars.
+  function outline(width,depth,r){
+    const shape=new THREE.Shape(),x=width/2,z=depth/2;
+    shape.moveTo(-x+r,-z);shape.lineTo(x-r,-z);shape.quadraticCurveTo(x,-z,x,-z+r);
+    shape.lineTo(x,z-r);shape.quadraticCurveTo(x,z,x-r,z);shape.lineTo(-x+r,z);
+    shape.quadraticCurveTo(-x,z,-x,z-r);shape.lineTo(-x,-z+r);shape.quadraticCurveTo(-x,-z,-x+r,-z);
+    return shape;
+  }
+  const shape=outline(w,d,.18);
+  shape.holes.push(new THREE.Path(outline(w-2*t,d-2*t,.18-t).getPoints(12).reverse()));
+  const geometry=new THREE.ExtrudeGeometry(shape,{depth:h,bevelEnabled:false,curveSegments:12});
+  geometry.center();geometry.rotateX(Math.PI/2);
+  return new THREE.Mesh(geometry,mat);
 }
 export function ribbon(group,w,d,y,texture){
   const m=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide});
@@ -97,13 +107,46 @@ export function ribbon(group,w,d,y,texture){
   const r=new THREE.Mesh(new THREE.PlaneGeometry(d-.15,.062),m);r.position.set(w/2+.013,y,0);r.rotation.y=Math.PI/2;group.add(r);
 }
 export function handles(group,w,d,y){
-  const strapMat=new THREE.MeshPhysicalMaterial({color:0x382924,roughness:.90,sheen:1,sheenColor:new THREE.Color(0x816054)});
-  const patchMat=new THREE.MeshBasicMaterial({color:0x6b4c42});
-  const add=(x,z,rot=0)=>{const h=new THREE.Mesh(new THREE.BoxGeometry(.70,.09,.052),strapMat);h.position.set(x,y,z);h.rotation.y=rot;group.add(h);[-.23,.23].forEach(o=>{const p=new THREE.Mesh(new THREE.BoxGeometry(.12,.094,.056),patchMat);p.position.copy(h.position);if(rot===0)p.position.x+=o;else p.position.z+=o;p.rotation.y=rot;group.add(p);});};
-  add(-1.55,d/2+.035);add(.25,d/2+.035);add(w/2+.035,-.68,Math.PI/2);
+  const strapMat=new THREE.MeshPhysicalMaterial({color:0x60483b,roughness:.95,sheen:.6});
+  const stitchMat=new THREE.MeshStandardMaterial({color:0x9e856e,roughness:1});
+  // Four handles, two on each long side, as specified in the Carol Plus sheet.
+  for(const side of [-1,1])for(const z of [-d*.25,d*.25]){
+    const strap=new THREE.Mesh(new THREE.BoxGeometry(.035,.07,.64),strapMat);
+    strap.position.set(side*(w/2+.025),y,z);group.add(strap);
+    for(const dz of [-.27,.27]){
+      const patch=new THREE.Mesh(new THREE.BoxGeometry(.04,.085,.08),stitchMat);
+      patch.position.set(side*(w/2+.026),y,z+dz);group.add(patch);
+    }
+  }
 }
 export function topPattern(group,w,d,y,mats,mobile=false){
-  const g=new THREE.PlaneGeometry(w-.14,d-.14,mobile?52:104,mobile?32:64);
-  const m=new THREE.MeshPhysicalMaterial({map:mats.tex.floral,bumpMap:mats.tex.bump,bumpScale:.12,displacementMap:mats.tex.bump,displacementScale:.065,color:0xfaf7f0,roughness:.91,sheen:.45,sheenColor:new THREE.Color(0xffffff),side:THREE.DoubleSide});
-  const p=new THREE.Mesh(g,m);p.rotation.x=-Math.PI/2;p.position.y=y;group.add(p);return p;
+  const g=new THREE.PlaneGeometry(w-.14,d-.14,mobile?64:112,mobile?76:132);
+  const positions=g.attributes.position,uv=g.attributes.uv;
+  // Project only the textile surface from the actual catalog photograph onto
+  // the mesh. No photograph plane or background is added to the scene.
+  // Corners in catalogo-carol-plus.jpg (1312 x 1869): front-left, front-right,
+  // back-right, back-left. Projective UVs remove the photograph's perspective.
+  const q=[[104/1312,481/1869],[745/1312,691/1869],[1192/1312,528/1869],[531/1312,389/1869]];
+  const [a,b,c,e]=q,dx1=b[0]-c[0],dx2=e[0]-c[0],dx3=a[0]-b[0]+c[0]-e[0];
+  const dy1=b[1]-c[1],dy2=e[1]-c[1],dy3=a[1]-b[1]+c[1]-e[1],det=dx1*dy2-dx2*dy1;
+  const gx=(dx3*dy2-dx2*dy3)/det,gy=(dx1*dy3-dx3*dy1)/det;
+  for(let i=0;i<positions.count;i++){
+    const u=uv.getX(i),v=uv.getY(i),den=gx*u+gy*v+1;
+    const photoX=((b[0]-a[0]+gx*b[0])*u+(e[0]-a[0]+gy*e[0])*v+a[0])/den;
+    const photoY=((b[1]-a[1]+gx*b[1])*u+(e[1]-a[1]+gy*e[1])*v+a[1])/den;
+    uv.setXY(i,photoX,1-photoY);
+    // Small physical loft; the floral motif is the photographed fabric itself.
+    const loft=Math.pow(Math.sin(u*Math.PI*6)*Math.sin(v*Math.PI*8),2)*.008;
+    const edge=Math.min(1,Math.min(u,1-u,v,1-v)*35);
+    positions.setZ(i,loft*edge);
+  }
+  g.computeVertexNormals();uv.needsUpdate=true;
+  const material=new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:.94,sheen:.22,side:THREE.FrontSide});
+  const photo=new THREE.TextureLoader().load('./catalogo-carol-plus.jpg',texture=>{
+    texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=8;
+    material.map=texture;material.needsUpdate=true;
+    window.dispatchEvent(new Event('cf:carol-texture-ready'));
+  },undefined,()=>console.warn('Carol Plus textile reference could not be loaded'));
+  photo.colorSpace=THREE.SRGBColorSpace;
+  const p=new THREE.Mesh(g,material);p.rotation.x=-Math.PI/2;p.position.y=y;group.add(p);return p;
 }
