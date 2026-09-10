@@ -1,7 +1,7 @@
 .hero-higgsfield{
   background:
-    radial-gradient(circle at 72% 42%, rgba(182,144,88,.12), transparent 30%),
-    radial-gradient(circle at 64% 58%, rgba(255,255,255,.035), transparent 28%),
+    linear-gradient(90deg,rgba(6,6,6,.92) 0%,rgba(6,6,6,.66) 34%,rgba(6,6,6,.20) 64%,rgba(6,6,6,.38) 100%),
+    url('/catalogo-carol-plus.jpg') 68% 50%/cover no-repeat,
     linear-gradient(90deg,#060606 0%,#090909 48%,#050505 100%) !important;
   opacity:1 !important;
   transform:none !important;
@@ -20,6 +20,12 @@
     linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.38)) !important;
 }
 @media (max-width:700px){
+  .hero-higgsfield{
+    background:
+      linear-gradient(180deg,rgba(6,6,6,.20) 0%,rgba(6,6,6,.34) 46%,rgba(6,6,6,.90) 88%,#060606 100%),
+      url('/catalogo-carol-plus.jpg') 66% 34%/auto 70% no-repeat,
+      #060606 !important;
+  }
   .hero-vignette{
     background:
       radial-gradient(circle at 58% 40%,transparent 0 24%,rgba(0,0,0,.18) 56%,rgba(0,0,0,.72) 100%),
